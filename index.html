@@ -171,6 +171,19 @@
             background: rgba(94, 82, 64, 0.2);
         }
 
+        .btn-danger {
+            background: var(--color-error);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-danger:hover {
+            background: rgba(192, 21, 47, 0.9);
+        }
+
         .scanner-controls {
             display: flex;
             gap: 8px;
@@ -224,6 +237,7 @@
         .checkin-table {
             overflow-x: auto;
             margin-top: 12px;
+            flex: 1;
         }
 
         table {
@@ -302,6 +316,17 @@
             font-size: 48px;
             margin-bottom: 12px;
         }
+
+        .dashboard-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .dashboard-actions .btn {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -367,7 +392,10 @@
                 </table>
             </div>
 
-            <button class="btn btn-secondary" onclick="exportData()" style="margin-top: auto;">📥 Esporta Dati</button>
+            <div class="dashboard-actions">
+                <button class="btn btn-secondary" onclick="exportData()">📥 Esporta Dati</button>
+                <button class="btn btn-danger" onclick="clearData()">🗑️ Azzera Dati Festa</button>
+            </div>
         </div>
     </div>
 
@@ -526,6 +554,16 @@
             a.download = `don-t-stop-checkins-${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             window.URL.revokeObjectURL(url);
+        }
+
+        function clearData() {
+            if (confirm('⚠️ Sei sicuro? Questo eliminerà TUTTI i check-in della festa attuale. L\'azione non può essere annullata!')) {
+                window.participants = [];
+                saveData();
+                updateDashboard();
+                document.getElementById('scannerResult').classList.remove('show');
+                alert('✅ Dati azzerati! Pronto per la prossima festa!');
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
