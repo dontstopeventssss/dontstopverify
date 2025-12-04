@@ -550,10 +550,10 @@
                         result.classList.add('success');
                         result.classList.remove('error', 'warning');
 
-                        // REFRESH AUTOMATICO DOPO 2 SECONDI
+                        // AGGIORNA DASHBOARD SENZA REFRESH!
                         setTimeout(() => {
-                            location.reload();
-                        }, 2000);
+                            loadRegistrations();
+                        }, 1000);
                     } catch (error) {
                         console.error('Errore update:', error);
                         showAccessBanner(false, 'Errore nel sistema');
