@@ -434,11 +434,11 @@
             const result = document.getElementById('scannerResult');
 
             if (registration) {
-                if (registration.checkedIn) {
+                if (registration.checkedin) {
                     result.innerHTML = `
                         <div class="status-indicator">⚠️ Attenzione!</div>
                         <strong>Già entrato!</strong><br>
-                        ${registration.firstName} ${registration.lastName} - ${registration.checkedInAt}
+                        ${registration.firstname} ${registration.lastname} - ${registration.checkedinat}
                     `;
                     result.classList.add('warning');
                     result.classList.remove('success', 'error');
@@ -449,8 +449,8 @@
                         const { error } = await supabase
                             .from('registrations')
                             .update({
-                                checkedIn: true,
-                                checkedInAt: timestamp
+                                checkedin: true,
+                                checkedinat: timestamp
                             })
                             .eq('email', decodedText);
 
@@ -458,7 +458,7 @@
 
                         result.innerHTML = `
                             <div class="status-indicator">✓ Benvenuto!</div>
-                            ${registration.firstName} ${registration.lastName}<br>
+                            ${registration.firstname} ${registration.lastname}<br>
                             ${registration.list}
                         `;
                         result.classList.add('success');
@@ -487,7 +487,7 @@
         }
 
         function updateDashboard() {
-            const checkedIn = allRegistrations.filter(r => r.checkedIn);
+            const checkedIn = allRegistrations.filter(r => r.checkedin);
             const lists = [...new Set(checkedIn.map(r => r.list))].sort();
             
             document.getElementById('totalCheckins').textContent = checkedIn.length;
@@ -508,7 +508,7 @@
                 btn.classList.add('active');
             }
 
-            const checkedIn = allRegistrations.filter(r => r.checkedIn);
+            const checkedIn = allRegistrations.filter(r => r.checkedin);
             const filtered = selectedList ? checkedIn.filter(r => r.list === selectedList) : checkedIn;
 
             const tbody = document.getElementById('checkinList');
@@ -525,9 +525,9 @@
             } else {
                 tbody.innerHTML = filtered.map(r => `
                     <tr>
-                        <td><strong>${r.firstName} ${r.lastName}</strong></td>
+                        <td><strong>${r.firstname} ${r.lastname}</strong></td>
                         <td>${r.list}</td>
-                        <td><span class="badge">✓ ${r.checkedInAt}</span></td>
+                        <td><span class="badge">✓ ${r.checkedinat}</span></td>
                     </tr>
                 `).join('');
             }
