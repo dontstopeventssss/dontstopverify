@@ -54,17 +54,70 @@
             padding: 16px;
         }
 
+        .access-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .access-banner.show {
+            display: block;
+        }
+
+        .access-banner.allowed {
+            background: rgba(33, 128, 141, 0.95);
+            box-shadow: 0 4px 12px rgba(33, 128, 141, 0.3);
+        }
+
+        .access-banner.denied {
+            background: rgba(192, 21, 47, 0.95);
+            box-shadow: 0 4px 12px rgba(192, 21, 47, 0.3);
+        }
+
+        .access-title {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 0;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        .access-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 8px 0 0 0;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
+            margin-top: 80px;
         }
 
         @media (max-width: 900px) {
             .container {
                 grid-template-columns: 1fr;
+                margin-top: 140px;
             }
         }
 
@@ -286,6 +339,12 @@
     </style>
 </head>
 <body>
+    <!-- BANNER ACCESSO -->
+    <div class="access-banner" id="accessBanner">
+        <p class="access-title" id="accessTitle">ACCESSO CONSENTITO</p>
+        <p class="access-subtitle" id="accessSubtitle"></p>
+    </div>
+
     <h1>DON'T STOP</h1>
     <p class="subtitle">Verifica Accesso & Dashboard Live</p>
 
@@ -422,6 +481,31 @@
             }
         }
 
+        function showAccessBanner(allowed, message) {
+            const banner = document.getElementById('accessBanner');
+            const title = document.getElementById('accessTitle');
+            const subtitle = document.getElementById('accessSubtitle');
+
+            if (allowed) {
+                title.textContent = '✓ ACCESSO CONSENTITO';
+                subtitle.textContent = message || '';
+                banner.classList.remove('denied');
+                banner.classList.add('allowed');
+            } else {
+                title.textContent = '✗ NON AMMESSO';
+                subtitle.textContent = message || 'QR code non valido';
+                banner.classList.remove('allowed');
+                banner.classList.add('denied');
+            }
+
+            banner.classList.add('show');
+
+            // Nascondi il banner dopo 4 secondi
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 4000);
+        }
+
         async function onScanSuccess(decodedText) {
             // Evita scan duplicati nello stesso secondo
             if (lastScannedTicket === decodedText) {
@@ -435,6 +519,7 @@
 
             if (registration) {
                 if (registration.checkedin) {
+                    showAccessBanner(false, 'Già entrato/a');
                     result.innerHTML = `
                         <div class="status-indicator">⚠️ Attenzione!</div>
                         <strong>Già entrato!</strong><br>
@@ -456,6 +541,7 @@
 
                         if (error) throw error;
 
+                        showAccessBanner(true, `${registration.firstname} ${registration.lastname}`);
                         result.innerHTML = `
                             <div class="status-indicator">✓ Benvenuto!</div>
                             ${registration.firstname} ${registration.lastname}<br>
@@ -465,12 +551,14 @@
                         result.classList.remove('error', 'warning');
                     } catch (error) {
                         console.error('Errore update:', error);
+                        showAccessBanner(false, 'Errore nel sistema');
                         result.innerHTML = `<div class="status-indicator">❌ Errore</div>Errore nell'aggiornamento`;
                         result.classList.add('error');
                         result.classList.remove('success', 'warning');
                     }
                 }
             } else {
+                showAccessBanner(false, 'QR code non valido');
                 result.innerHTML = `
                     <div class="status-indicator">❌ Non trovato</div>
                     QR non valido: ${decodedText}
