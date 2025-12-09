@@ -408,7 +408,7 @@
 
     <script>
         const SUPABASE_URL = 'https://ucnftwqplawdxbwlxjah.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_I7mKsvBQoyAwHm2c3eU3Rg_Mym3uCxI';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjbmZ0d3FwbGF3ZHhid2x4amFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MDM2MDUsImV4cCI6MjA4MDM3OTYwNX0.qdsRKZH5j0pcxltSbC2TYck5axDq2RvQJgYKMRAqJiI';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -500,14 +500,12 @@
 
             banner.classList.add('show');
 
-            // Nascondi il banner dopo 4 secondi
             setTimeout(() => {
                 banner.classList.remove('show');
             }, 4000);
         }
 
         async function onScanSuccess(decodedText) {
-            // Evita scan duplicati nello stesso secondo
             if (lastScannedTicket === decodedText) {
                 return;
             }
@@ -550,7 +548,6 @@
                         result.classList.add('success');
                         result.classList.remove('error', 'warning');
 
-                        // AGGIORNA DASHBOARD SENZA REFRESH!
                         setTimeout(() => {
                             loadRegistrations();
                         }, 1000);
@@ -576,7 +573,7 @@
         }
 
         function onScanError(error) {
-            // Ignora errori di scansione silenziosamente
+            // Ignora errori
         }
 
         function updateDashboard() {
